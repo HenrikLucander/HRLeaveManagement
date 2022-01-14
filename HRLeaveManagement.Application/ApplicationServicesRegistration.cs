@@ -1,4 +1,5 @@
 ﻿using HRLeaveManagement.Application.Profiles;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace HRLeaveManagement.Application
     // When client calls a method, services will be registered
     public static class ApplicationServicesRegistration
     {
-        public static void ConfigureApplicationServices(this IServiceCollection services)
+        public static IServiceCollection ConfigureApplicationServices(this IServiceCollection services)
         {
             // Another way:
             // Registers MappingProfile as the AutoMapper configuration.
@@ -24,6 +25,9 @@ namespace HRLeaveManagement.Application
             // Will traverse through every mapping profile that has its inheritance
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
+            services.AddMediatR(Assembly.GetExecutingAssembly());
+
+            return services;
         }
     }
 }
