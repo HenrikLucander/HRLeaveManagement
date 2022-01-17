@@ -7,11 +7,7 @@ using System.Threading.Tasks;
 
 namespace HRLeaveManagement.Application.DTOs.LeaveAllocation
 {
-    /// <summary>
-    /// Doesn't inherit from BaseDto, because Id is not needed on creation.
-    /// (no reference to primary key)
-    /// </summary>
-    public class CreateLeaveAllocationDto
+    public class UpdateLeaveAllocationDto : BaseDto
     {
         public int NumberOfDays { get; set; }
         public int LeaveTypeId { get; set; }
