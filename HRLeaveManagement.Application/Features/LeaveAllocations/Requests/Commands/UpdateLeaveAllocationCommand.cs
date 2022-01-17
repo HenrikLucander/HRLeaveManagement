@@ -10,6 +10,6 @@ namespace HRLeaveManagement.Application.Features.LeaveAllocations.Requests.Comma
 {
     public class UpdateLeaveAllocationCommand : IRequest<Unit> //Unit is no content as an update returns 202
     {
-        public LeaveAllocationDto LeaveAllocationDto { get; set; }
+        public UpdateLeaveAllocationDto LeaveAllocationDto { get; set; }
     }
 }
