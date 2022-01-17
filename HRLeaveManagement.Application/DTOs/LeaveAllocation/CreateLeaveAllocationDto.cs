@@ -11,7 +11,7 @@ namespace HRLeaveManagement.Application.DTOs.LeaveAllocation
     /// Doesn't inherit from BaseDto, because Id is not needed on creation.
     /// (no reference to primary key)
     /// </summary>
-    public class CreateLeaveAllocationDto
+    public class CreateLeaveAllocationDto : ILeaveAllocationDto
     {
         public int NumberOfDays { get; set; }
         public int LeaveTypeId { get; set; }

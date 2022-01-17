@@ -6,7 +6,7 @@ namespace HRLeaveManagement.Application.DTOs.LeaveRequest
     /// Doesn't inherit from BaseDto, because Id is not needed on creation.
     /// (no reference to primary key)
     /// </summary>
-    public class CreateLeaveRequestDto
+    public class CreateLeaveRequestDto : ILeaveRequestDto
     {
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
