@@ -24,14 +24,14 @@ namespace HRLeaveManagement.Application.Features.LeaveAllocations.Handlers.Comma
 
         public async Task<Unit> Handle(DeleteLeaveAllocationCommand request, CancellationToken cancellationToken)
         {
-            var leaveAllocation = _leaveAllocationRepository.Get(request.Id);
+            var leaveAllocation = await _leaveAllocationRepository.Get(request.Id);
 
             if (leaveAllocation == null)
             {
                 throw new NotFoundException(nameof(leaveAllocation), request.Id);
             }
 
-            await _leaveAllocationRepository.Delete(leaveAllocation.Id);
+            await _leaveAllocationRepository.Delete(leaveAllocation);
 
             return Unit.Value;
         }

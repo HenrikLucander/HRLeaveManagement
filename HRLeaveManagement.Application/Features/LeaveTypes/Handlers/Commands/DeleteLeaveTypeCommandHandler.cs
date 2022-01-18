@@ -31,7 +31,7 @@ namespace HRLeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
                 throw new NotFoundException(nameof(leaveType), request.Id);
             }
 
-            await _leaveTypeRepository.Delete(leaveType.Id);
+            await _leaveTypeRepository.Delete(leaveType);
 
             return Unit.Value;
         }

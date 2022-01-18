@@ -24,14 +24,14 @@ namespace HRLeaveManagement.Application.Features.LeaveRequests.Handlers.Commands
 
         public async Task<Unit> Handle(DeleteLeaveRequestCommand request, CancellationToken cancellationToken)
         {
-            var  leaveRequest = _leaveRequestRepository.Get(request.Id);
+            var  leaveRequest = await _leaveRequestRepository.Get(request.Id);
 
             if (leaveRequest == null)
             {
                 throw new NotFoundException(nameof(leaveRequest), request.Id);
             }
 
-            await _leaveRequestRepository.Delete(leaveRequest.Id);
+            await _leaveRequestRepository.Delete(leaveRequest);
 
             return Unit.Value;
         }
