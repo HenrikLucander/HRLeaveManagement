@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HRLeaveManagement.Domain\HRLeaveManagement.Domain.csproj" />
+    <ProjectReference Include="..\HRLeaveManagement.Domain\HR.LeaveManagement.Domain.csproj" />
   </ItemGroup>
 
 </Project>

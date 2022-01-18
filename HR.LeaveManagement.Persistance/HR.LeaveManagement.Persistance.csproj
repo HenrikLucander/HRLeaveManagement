@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HRLeaveManagement.Application\HRLeaveManagement.Application.csproj" />
+    <ProjectReference Include="..\HRLeaveManagement.Application\HR.LeaveManagement.Application.csproj" />
   </ItemGroup>
 
 </Project>
