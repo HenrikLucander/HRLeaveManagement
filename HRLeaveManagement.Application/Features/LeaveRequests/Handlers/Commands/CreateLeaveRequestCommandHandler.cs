@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using FluentValidation;
 using HRLeaveManagement.Application.DTOs.LeaveRequest.Validators;
+using HRLeaveManagement.Application.Exceptions;
 using HRLeaveManagement.Application.Features.LeaveRequests.Requests.Commands;
 using HRLeaveManagement.Application.Persistance.Contracts;
 using HRLeaveManagement.Domain;
@@ -34,7 +34,7 @@ namespace HRLeaveManagement.Application.Features.LeaveRequests.Handlers.Commands
 
             if (validationResult.IsValid == false)
             {
-                throw new Exception();
+                throw new ValidationException(validationResult);
             }
 
             var leaveRequest = _mapper.Map<LeaveRequest>(request.LeaveRequestDto);
