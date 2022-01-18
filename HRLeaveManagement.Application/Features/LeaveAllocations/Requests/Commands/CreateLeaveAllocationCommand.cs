@@ -10,6 +10,6 @@ namespace HRLeaveManagement.Application.Features.LeaveAllocations.Requests.Comma
 {
     public class CreateLeaveAllocationCommand : IRequest<int>
     {
-        public CreateLeaveAllocationDto leaveAllocationDto { get; set; }
+        public CreateLeaveAllocationDto LeaveAllocationDto { get; set; }
     }
 }
