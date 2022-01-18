@@ -1,4 +1,4 @@
-﻿using HRLeaveManagement.Application.Persistance.Contracts;
+﻿using HRLeaveManagement.Application.Contracts.Persistance;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
