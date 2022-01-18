@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HRLeaveManagement.Application.Contracts.Infrastructure;
+using HRLeaveManagement.Application.Models;
 
 namespace HRLeaveManagement.Application.Features.LeaveRequests.Handlers.Commands
 {
@@ -17,13 +19,17 @@ namespace HRLeaveManagement.Application.Features.LeaveRequests.Handlers.Commands
     {
         private readonly ILeaveRequestRepository _leaveRequestRepository;
         private readonly ILeaveTypeRepository _leaveTypeRepository;
+        private readonly IEmailSender _emailSender;
         private readonly IMapper _mapper;
 
         public CreateLeaveRequestCommandHandler(ILeaveRequestRepository leaveRequestRepository, 
-            ILeaveTypeRepository leaveTypeRepository, IMapper mapper)
+            ILeaveTypeRepository leaveTypeRepository, 
+            IEmailSender emailSender,
+            IMapper mapper)
         {
             _leaveRequestRepository = leaveRequestRepository;
             _leaveTypeRepository = leaveTypeRepository;
+            _emailSender = emailSender;
             _mapper = mapper;
         }
 
@@ -41,8 +47,24 @@ namespace HRLeaveManagement.Application.Features.LeaveRequests.Handlers.Commands
 
             leaveRequest = await _leaveRequestRepository.Add(leaveRequest);
 
-            return leaveRequest.Id;
+            // Send confirmation email
+            var email = new Email
+            {
+                To = "employee@org.com",
+                Body = $"Your leav request for {request.LeaveRequestDto.StartDate:D} to {request.LeaveRequestDto.EndDate:D}" +
+                $"has been submitter successfully.",
+                Subject = "Leave request submitted"           
+            };
+            try
+            {
+                await _emailSender.SendEmail(email);
+            }
+            catch (Exception ex)
+            {
 
+            }
+
+            return leaveRequest.Id;
         }
     }
 }
