@@ -61,7 +61,7 @@ namespace HRLeaveManagement.Application.Features.LeaveRequests.Handlers.Commands
             }
             catch (Exception ex)
             {
-
+                //// Log or handle error, but don't throw. The email is not critical.
             }
 
             return leaveRequest.Id;
