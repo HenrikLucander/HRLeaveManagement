@@ -27,7 +27,7 @@ namespace HRLeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
 
         public async Task<BaseCommandResponse> Handle(CreateLeaveTypeCommand request, CancellationToken cancellationToken)
         {
-            var response = new BaseCommandResponse();
+            var response = new BaseCommandResponse(); // Using custom response
             var validator = new CreateLeaveTypeDtoValidator();
             var validationResult = await validator.ValidateAsync(request.LeaveTypeDto);
 
@@ -36,6 +36,12 @@ namespace HRLeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
                 response.Success = false;
                 response.Message = "Creation failed.";
                 response.Errors = validationResult.Errors.Select(q => q.ErrorMessage).ToList();
+            }
+
+            // Added for testing unit testing (should be deleted)
+            if(response.Errors.Count > 0)
+            {
+                throw new ValidationException(validationResult);
             }
 
             var leaveType = _mapper.Map<LeaveType>(request.LeaveTypeDto);
