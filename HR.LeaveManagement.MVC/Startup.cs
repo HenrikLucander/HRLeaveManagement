@@ -1,4 +1,6 @@
+using HR.LeaveManagement.MVC.Contracts;
 using HR.LeaveManagement.MVC.Services;
+using HR.LeaveManagement.MVC.Services.Base;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,8 +28,11 @@ namespace HR.LeaveManagement.MVC
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient<IClient, Client>(cl => cl.BaseAddress = new Uri("https://localhost:44384"));
-            //services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
             //services.AddScoped<ILeaveTypeService, LeaveTypeService>();
+
+            services.AddSingleton<ILocalStorageService, LocalStorageService>();
             services.AddControllersWithViews();
         }
 
