@@ -37,20 +37,17 @@ namespace HRLeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
                 response.Message = "Creation failed.";
                 response.Errors = validationResult.Errors.Select(q => q.ErrorMessage).ToList();
             }
-
-            // Added for testing unit testing (should be deleted)
-            if(response.Errors.Count > 0)
+            else
             {
-                throw new ValidationException(validationResult);
+                var leaveType = _mapper.Map<LeaveType>(request.LeaveTypeDto);
+
+                leaveType = await _leaveTypeRepository.Add(leaveType);
+
+                response.Success = true;
+                response.Message = "Creation successful.";
+                response.Id = leaveType.Id;
             }
 
-            var leaveType = _mapper.Map<LeaveType>(request.LeaveTypeDto);
-
-            leaveType = await _leaveTypeRepository.Add(leaveType);
-
-            response.Success = true;
-            response.Message = "Creation successful.";
-            response.Id = leaveType.Id;
             return response;
         }
     }

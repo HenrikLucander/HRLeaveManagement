@@ -57,13 +57,13 @@ namespace HR.LeaveManagement.Application.UnitTests.LeaveTypes.Commands
         public async Task Valid_LeaveType_Added()
         {
             // Pass the request and cancellationToken to the handler
-            var result = _handler.Handle(new CreateLeaveTypeCommand() { LeaveTypeDto = _createLeaveTypeDto }, CancellationToken.None);
+            var result = await _handler.Handle(new CreateLeaveTypeCommand() { LeaveTypeDto = _createLeaveTypeDto }, CancellationToken.None);
 
             // GetAll() to check that count is right (in the assert section)
             var leaveTypes = await _mockRepo.Object.GetAll();
 
             // Using Shouldly for assert
-            await result.ShouldBeOfType<Task<BaseCommandResponse>>();
+            result.ShouldBeOfType<BaseCommandResponse>();
             leaveTypes.Count.ShouldBe(4);
         }
 
@@ -73,18 +73,15 @@ namespace HR.LeaveManagement.Application.UnitTests.LeaveTypes.Commands
             // Set DefaultDays to invalid value ( < 1 )
             _createLeaveTypeDto.DefaultDays = -1;
 
-            // Testing for a ValidationException         
-            ValidationException ex = await Should.ThrowAsync<ValidationException>
-                (async () =>
-                    // Pass the request and cancellationToken to the handler
-                    await _handler.Handle(new CreateLeaveTypeCommand() { LeaveTypeDto = _createLeaveTypeDto }, CancellationToken.None)
-                );
+            var result = await _handler.Handle(new CreateLeaveTypeCommand() { LeaveTypeDto = _createLeaveTypeDto }, CancellationToken.None);
 
             // GetAll() to check that count is right (in the assert section)
             var leaveTypes = await _mockRepo.Object.GetAll();
 
             // Using Shouldly for assert (should "still" be 3 as the LeaveType was invalid)
             leaveTypes.Count.ShouldBe(3);
+
+            result.ShouldBeOfType<BaseCommandResponse>();
         }
     }
 }
