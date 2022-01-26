@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace HR.LeaveManagement.Identity.Configurations
 {
@@ -15,13 +11,13 @@ namespace HR.LeaveManagement.Identity.Configurations
             builder.HasData(
                 new IdentityRole
                 {
-                    Id = "cac43a6e-f7bb-4448-baaf-1add431ccbbf",
+                    Id = "57dbde01-cc94-42d5-8eec-462d46b12fbf",
                     Name = "Employee",
                     NormalizedName = "EMPLOYEE"
                 },
                 new IdentityRole
                 {
-                    Id = "cbc43a8e-f7bb-4445-baaf-1add431ffbbf",
+                    Id = "db1e0679-9844-4d75-9d90-a058751fc899",
                     Name = "Administrator",
                     NormalizedName = "ADMINISTRATOR"
                 }

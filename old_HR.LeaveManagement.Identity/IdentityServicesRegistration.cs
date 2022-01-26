@@ -3,16 +3,11 @@ using HR.LeaveManagement.Application.Models.Identity;
 using HR.LeaveManagement.Identity.Models;
 using HR.LeaveManagement.Identity.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 using System.Text;
 
 namespace HR.LeaveManagement.Identity
@@ -23,7 +18,7 @@ namespace HR.LeaveManagement.Identity
         {
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
-            services.AddDbContext<LeaveManagementIdentityDbContext>(options => 
+            services.AddDbContext<LeaveManagementIdentityDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("LeaveManagementIdentityConnectionString"),
                 b => b.MigrationsAssembly(typeof(LeaveManagementIdentityDbContext).Assembly.FullName)));
 
@@ -31,7 +26,6 @@ namespace HR.LeaveManagement.Identity
                 .AddEntityFrameworkStores<LeaveManagementIdentityDbContext>().AddDefaultTokenProviders();
 
             services.AddTransient<IAuthService, AuthService>();
-            //services.AddTransient<IUserService, UserService>();
 
             services.AddAuthentication(options =>
             {
