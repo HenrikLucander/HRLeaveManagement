@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using HR.LeaveManagement.MVC.Models;
 using System.Threading.Tasks;
 
 namespace HR.LeaveManagement.MVC.Contracts
@@ -9,7 +6,7 @@ namespace HR.LeaveManagement.MVC.Contracts
     public interface IAuthenticationService
     {
         Task<bool> Authenticate(string email, string password);
-        Task<bool> Register(string firstName, string lastName, string userName, string email, string password);
+        Task<bool> Register(RegisterVM registration);
         Task Logout();
     }
 }

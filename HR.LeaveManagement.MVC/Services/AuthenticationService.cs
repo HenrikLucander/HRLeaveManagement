@@ -1,5 +1,7 @@
-﻿using HR.LeaveManagement.Application.Models.Identity;
+﻿using AutoMapper;
+using HR.LeaveManagement.Application.Models.Identity;
 using HR.LeaveManagement.MVC.Contracts;
+using HR.LeaveManagement.MVC.Models;
 using HR.LeaveManagement.MVC.Services.Base;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -17,12 +19,14 @@ namespace HR.LeaveManagement.MVC.Services
     public class AuthenticationService : BaseHttpService, Contracts.IAuthenticationService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IMapper _mapper;
         private JwtSecurityTokenHandler _tokenHandler;
 
-        public AuthenticationService(IClient client, ILocalStorageService localStorage, IHttpContextAccessor httpContextAccessor) 
+        public AuthenticationService(IClient client, ILocalStorageService localStorage, IHttpContextAccessor httpContextAccessor, IMapper mapper) 
             : base(client, localStorage)
         {
             _httpContextAccessor = httpContextAccessor;
+            _mapper = mapper;
             _tokenHandler = new JwtSecurityTokenHandler();
         }
 
@@ -65,13 +69,14 @@ namespace HR.LeaveManagement.MVC.Services
             await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
-        public async Task<bool> Register(string firstName, string lastName, string userName, string email, string password)
+        public async Task<bool> Register(RegisterVM registration)
         {
-            RegistrationRequest registrationRequest = new() { FirstName = firstName, LastName = lastName, UserName = userName, Email = email, Password = password };
+            RegistrationRequest registrationRequest = _mapper.Map<RegistrationRequest>(registration);
             var response = await _client.RegisterAsync(registrationRequest.FirstName, registrationRequest.LastName, registrationRequest.UserName, registrationRequest.Email, registrationRequest.Password);
 
             if (!string.IsNullOrEmpty(response.UserId))
             {
+                await Authenticate(registration.Email, registration.Password);
                 return true;
             }
             return false;
