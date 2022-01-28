@@ -1,22 +1,20 @@
 ﻿using HR.LeaveManagement.MVC.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace HR.LeaveManagement.MVC.Services.Base
 {
     public class BaseHttpService
     {
-        protected IClient _client;
         protected readonly ILocalStorageService _localStorage;
+        
+        protected IClient _client;
 
         public BaseHttpService(IClient client, ILocalStorageService localStorage)
         {
             _client = client;
             _localStorage = localStorage;
+
         }
 
         protected Response<Guid> ConvertApiExceptions<Guid>(ApiException ex)
@@ -38,10 +36,8 @@ namespace HR.LeaveManagement.MVC.Services.Base
         protected void AddBearerToken()
         {
             if (_localStorage.Exists("token"))
-            {
                 _client.HttpClient.DefaultRequestHeaders.Authorization = 
                     new AuthenticationHeaderValue("Bearer", _localStorage.GetStorageValue<string>("token"));
-            }
         }
     }
 }

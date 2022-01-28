@@ -1,23 +1,22 @@
-﻿using HR.LeaveManagement.Infrastructure.Mail;
-using HRLeaveManagement.Application.Contracts.Infrastructure;
-using HRLeaveManagement.Application.Models;
+﻿using HR.LeaveManagement.Application.Contracts.Infrastructure;
+using HR.LeaveManagement.Application.Models;
+using HR.LeaveManagement.Application.Profiles;
+using HR.LeaveManagement.Infrastructure.Mail;
+using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace HR.LeaveManagement.Infrastructure
+namespace HR.LeaveManagement.Application
 {
     public static class InfrastructureServicesRegistration
     {
         public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
-
-            // AddTransient = every time a brand new instance is made
             services.AddTransient<IEmailSender, EmailSender>();
 
             return services;

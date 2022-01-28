@@ -1,5 +1,5 @@
-﻿using HRLeaveManagement.Application.Contracts.Persistance;
-using HRLeaveManagement.Domain;
+﻿using HR.LeaveManagement.Application.Contracts.Persistence;
+using HR.LeaveManagement.Domain;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,6 @@ namespace HR.LeaveManagement.Application.UnitTests.Mocks
     {
         public static Mock<ILeaveTypeRepository> GetLeaveTypeRepository()
         {
-            // Sample data
             var leaveTypes = new List<LeaveType>
             {
                 new LeaveType
@@ -36,20 +35,18 @@ namespace HR.LeaveManagement.Application.UnitTests.Mocks
                 }
             };
 
-            // Mock repo object
             var mockRepo = new Mock<ILeaveTypeRepository>();
 
-            // Calls the GetAll() method from ILeaveTypeRepository
             mockRepo.Setup(r => r.GetAll()).ReturnsAsync(leaveTypes);
 
-            // Calls the Add() method from ILeaveTypeRepository, passes a LeaveType as parameter
-            mockRepo.Setup(r => r.Add(It.IsAny<LeaveType>())).ReturnsAsync((LeaveType leaveType) =>
+            mockRepo.Setup(r => r.Add(It.IsAny<LeaveType>())).ReturnsAsync((LeaveType leaveType) => 
             {
                 leaveTypes.Add(leaveType);
                 return leaveType;
             });
 
             return mockRepo;
+
         }
     }
 }

@@ -1,33 +1,33 @@
 ﻿using AutoMapper;
-using HR.LeaveManagement.Application.Models.Identity;
-using HR.LeaveManagement.MVC.Contracts;
 using HR.LeaveManagement.MVC.Models;
 using HR.LeaveManagement.MVC.Services.Base;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace HR.LeaveManagement.MVC.Services
+namespace HR.LeaveManagement.MVC.Contracts
 {
-    public class AuthenticationService : BaseHttpService, Contracts.IAuthenticationService
+    public class AuthenticationService : BaseHttpService, IAuthenticationService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         private JwtSecurityTokenHandler _tokenHandler;
 
-        public AuthenticationService(IClient client, ILocalStorageService localStorage, IHttpContextAccessor httpContextAccessor, IMapper mapper) 
+        public AuthenticationService(IClient client, ILocalStorageService localStorage, IHttpContextAccessor httpContextAccessor,
+            IMapper mapper)
             : base(client, localStorage)
         {
-            _httpContextAccessor = httpContextAccessor;
-            _mapper = mapper;
-            _tokenHandler = new JwtSecurityTokenHandler();
+            this._httpContextAccessor = httpContextAccessor;
+            this._mapper = mapper;
+            this._tokenHandler = new JwtSecurityTokenHandler();
         }
 
         public async Task<bool> Authenticate(string email, string password)
@@ -35,32 +35,39 @@ namespace HR.LeaveManagement.MVC.Services
             try
             {
                 AuthRequest authenticationRequest = new() { Email = email, Password = password };
-                var authenticationResponse = await _client.LoginAsync(authenticationRequest.Email, authenticationRequest.Password);
+                var authenticationResponse = await _client.LoginAsync(authenticationRequest);
 
                 if (authenticationResponse.Token != string.Empty)
                 {
-                    // Get Claims from token and Build auth user object
+                    //Get Claims from token and Build auth user object
                     var tokenContent = _tokenHandler.ReadJwtToken(authenticationResponse.Token);
                     var claims = ParseClaims(tokenContent);
                     var user = new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme));
                     var login = _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, user);
-                    _localStorage.SetStorageValue("token",authenticationResponse.Token);
+                    _localStorage.SetStorageValue("token", authenticationResponse.Token);
 
                     return true;
                 }
                 return false;
             }
-            catch
+            catch 
             {
                 return false;
             }
         }
 
-        private IList<Claim> ParseClaims(JwtSecurityToken tokenContent)
+        public async Task<bool> Register(RegisterVM registration)
         {
-            var claims = tokenContent.Claims.ToList();
-            claims.Add(new Claim(ClaimTypes.Name, tokenContent.Subject));
-            return claims;
+
+            RegistrationRequest registrationRequest = _mapper.Map<RegistrationRequest>(registration);
+            var response = await _client.RegisterAsync(registrationRequest);
+
+            if (!string.IsNullOrEmpty(response.UserId))
+            {
+                await Authenticate(registration.Email, registration.Password);
+                return true;
+            }
+            return false;
         }
 
         public async Task Logout()
@@ -69,17 +76,11 @@ namespace HR.LeaveManagement.MVC.Services
             await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
-        public async Task<bool> Register(RegisterVM registration)
+        private IList<Claim> ParseClaims(JwtSecurityToken tokenContent)
         {
-            RegistrationRequest registrationRequest = _mapper.Map<RegistrationRequest>(registration);
-            var response = await _client.RegisterAsync(registrationRequest.FirstName, registrationRequest.LastName, registrationRequest.UserName, registrationRequest.Email, registrationRequest.Password);
-
-            if (!string.IsNullOrEmpty(response.UserId))
-            {
-                await Authenticate(registration.Email, registration.Password);
-                return true;
-            }
-            return false;
+            var claims = tokenContent.Claims.ToList();
+            claims.Add(new Claim(ClaimTypes.Name, tokenContent.Subject));
+            return claims;
         }
     }
 }

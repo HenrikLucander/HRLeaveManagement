@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
+using HR.LeaveManagement.Application.Contracts.Persistence;
+using HR.LeaveManagement.Application.DTOs.LeaveType;
+using HR.LeaveManagement.Application.Exceptions;
+using HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands;
+using HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Queries;
+using HR.LeaveManagement.Application.Features.LeaveTypes.Requests.Commands;
+using HR.LeaveManagement.Application.Features.LeaveTypes.Requests.Queries;
+using HR.LeaveManagement.Application.Profiles;
+using HR.LeaveManagement.Application.Responses;
 using HR.LeaveManagement.Application.UnitTests.Mocks;
-using HRLeaveManagement.Application.Contracts.Persistance;
-using HRLeaveManagement.Application.DTOs.LeaveType;
-using HRLeaveManagement.Application.Exceptions;
-using HRLeaveManagement.Application.Features.LeaveTypes.Handlers.Commands;
-using HRLeaveManagement.Application.Features.LeaveTypes.Requests.Commands;
-using HRLeaveManagement.Application.Profiles;
-using HRLeaveManagement.Application.Responses;
+using HR.LeaveManagement.Domain;
 using Moq;
 using Shouldly;
 using System;
@@ -21,32 +24,24 @@ namespace HR.LeaveManagement.Application.UnitTests.LeaveTypes.Commands
 {
     public class CreateLeaveTypeCommandHandlerTests
     {
-        // Need mapper and (mock)repo to interact with the handler
-        // As we are not injecting the real ones, we need to set them up in the ctor
         private readonly IMapper _mapper;
         private readonly Mock<ILeaveTypeRepository> _mockRepo;
-        private readonly CreateLeaveTypeCommandHandler _handler; // Need the handler we are about to test
-        private readonly CreateLeaveTypeDto _createLeaveTypeDto; // The CreateLeaveTypeCommand needs a CreateLeaveTypeDto
+        private readonly CreateLeaveTypeDto _leaveTypeDto;
+        private readonly CreateLeaveTypeCommandHandler _handler;
 
         public CreateLeaveTypeCommandHandlerTests()
         {
-            // Set the repo to mock repo
             _mockRepo = MockLeaveTypeRepository.GetLeaveTypeRepository();
-
-            // As mapper is not injected,
-            // we need the mapper to know about the mapping configurations in the Application layer.
-            // Thus represents the real mapper.
-            var mapperConfig = new MapperConfiguration(c =>
+            
+            var mapperConfig = new MapperConfiguration(c => 
             {
                 c.AddProfile<MappingProfile>();
             });
-            _mapper = mapperConfig.CreateMapper();
 
-            // Instantiate the handler with the mock repo and mapper
+            _mapper = mapperConfig.CreateMapper();
             _handler = new CreateLeaveTypeCommandHandler(_mockRepo.Object, _mapper);
 
-            // Instantiate the CreateLeaveTypeDto
-            _createLeaveTypeDto = new CreateLeaveTypeDto
+            _leaveTypeDto = new CreateLeaveTypeDto
             {
                 DefaultDays = 15,
                 Name = "Test DTO"
@@ -56,32 +51,28 @@ namespace HR.LeaveManagement.Application.UnitTests.LeaveTypes.Commands
         [Fact]
         public async Task Valid_LeaveType_Added()
         {
-            // Pass the request and cancellationToken to the handler
-            var result = await _handler.Handle(new CreateLeaveTypeCommand() { LeaveTypeDto = _createLeaveTypeDto }, CancellationToken.None);
+            var result = await _handler.Handle(new CreateLeaveTypeCommand() { LeaveTypeDto = _leaveTypeDto }, CancellationToken.None);
 
-            // GetAll() to check that count is right (in the assert section)
             var leaveTypes = await _mockRepo.Object.GetAll();
 
-            // Using Shouldly for assert
             result.ShouldBeOfType<BaseCommandResponse>();
+
             leaveTypes.Count.ShouldBe(4);
         }
 
         [Fact]
-        public async Task Invalid_LeaveType_Added()
+        public async Task InValid_LeaveType_Added()
         {
-            // Set DefaultDays to invalid value ( < 1 )
-            _createLeaveTypeDto.DefaultDays = -1;
+            _leaveTypeDto.DefaultDays = -1;
 
-            var result = await _handler.Handle(new CreateLeaveTypeCommand() { LeaveTypeDto = _createLeaveTypeDto }, CancellationToken.None);
+            var result = await _handler.Handle(new CreateLeaveTypeCommand() { LeaveTypeDto = _leaveTypeDto }, CancellationToken.None);
 
-            // GetAll() to check that count is right (in the assert section)
             var leaveTypes = await _mockRepo.Object.GetAll();
-
-            // Using Shouldly for assert (should "still" be 3 as the LeaveType was invalid)
+            
             leaveTypes.Count.ShouldBe(3);
 
             result.ShouldBeOfType<BaseCommandResponse>();
+            
         }
     }
 }

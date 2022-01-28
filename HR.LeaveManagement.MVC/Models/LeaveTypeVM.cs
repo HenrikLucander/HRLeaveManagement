@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace HR.LeaveManagement.MVC.Models
@@ -21,4 +20,5 @@ namespace HR.LeaveManagement.MVC.Models
         [Display(Name = "Default Number Of Days")]
         public int DefaultDays { get; set; }
     }
+
 }

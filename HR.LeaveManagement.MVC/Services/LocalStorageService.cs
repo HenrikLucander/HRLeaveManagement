@@ -1,14 +1,11 @@
 ﻿using Hanssens.Net;
-using HR.LeaveManagement.MVC.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace HR.LeaveManagement.MVC.Services
+namespace HR.LeaveManagement.MVC.Contracts
 {
-    // client needs a way to store jwt tokens, thus we implement localStorageService
     public class LocalStorageService : ILocalStorageService
     {
         private LocalStorage _storage;
@@ -26,15 +23,16 @@ namespace HR.LeaveManagement.MVC.Services
 
         public void ClearStorage(List<string> keys)
         {
-            foreach(var key in keys)
+            foreach (var key in keys)
             {
                 _storage.Remove(key);
             }
         }
 
-        public bool Exists(string key)
+        public void SetStorageValue<T>(string key, T value)
         {
-            return _storage.Exists(key);
+            _storage.Store(key, value);
+            _storage.Persist();
         }
 
         public T GetStorageValue<T>(string key)
@@ -42,10 +40,9 @@ namespace HR.LeaveManagement.MVC.Services
             return _storage.Get<T>(key);
         }
 
-        public void SetStorageValue<T>(string key, T value)
+        public bool Exists(string key)
         {
-            _storage.Store(key, value);
-            _storage.Persist();
+            return _storage.Exists(key);
         }
     }
 }
