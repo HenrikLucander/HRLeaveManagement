@@ -28,7 +28,6 @@ namespace HR.LeaveManagement.Persistence
                     entry.Entity.CreatedBy = username;
                 }
             }
-
             var result = await base.SaveChangesAsync();
 
             return result;
