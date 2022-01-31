@@ -1,4 +1,5 @@
 using HR.LeaveManagement.MVC.Contracts;
+using HR.LeaveManagement.MVC.Middleware;
 using HR.LeaveManagement.MVC.Services;
 using HR.LeaveManagement.MVC.Services.Base;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -70,6 +71,7 @@ namespace HR.LeaveManagement.MVC
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseMiddleware<RequestMiddleware>();
 
             app.UseAuthorization();
 
